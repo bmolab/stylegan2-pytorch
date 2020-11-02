@@ -481,6 +481,7 @@ class Generator(nn.Module):
         input_is_latent=False,
         noise=None,
         randomize_noise=True,
+        extract_w=False
     ):
         if not input_is_latent:
             styles = [self.style(s) for s in styles]
@@ -520,6 +521,10 @@ class Generator(nn.Module):
             latent2 = styles[1].unsqueeze(1).repeat(1, self.n_latent - inject_index, 1)
 
             latent = torch.cat([latent, latent2], 1)
+        
+        if extract_w:
+            torch.save(latent, 'rand_w_seed.pt') 
+            return None 
 
         out = self.input(latent)
         out = self.conv1(out, latent[:, 0], noise=noise[0])
